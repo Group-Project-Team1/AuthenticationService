@@ -41,6 +41,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<RegistrationToken> registrationTokens;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserRole> userRoles;
 }
