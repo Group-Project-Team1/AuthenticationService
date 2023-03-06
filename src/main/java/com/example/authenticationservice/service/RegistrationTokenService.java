@@ -35,4 +35,13 @@ public class RegistrationTokenService {
         return registrationToken;
     }
 
+    @Transactional
+    public RegistrationToken getRegistrationTokenByToken(String token) {
+        return registrationTokenDao.getRegistrationTokenByToken(token);
+    }
+
+    @Transactional
+    public boolean isExpired(RegistrationToken registrationToken) {
+        return registrationTokenDao.isExpired(registrationToken);
+    }
 }

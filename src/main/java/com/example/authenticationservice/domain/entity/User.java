@@ -1,5 +1,6 @@
 package com.example.authenticationservice.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -39,8 +40,17 @@ public class User {
     private Boolean activeFlag;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    @ToString.Exclude
     private Set<RegistrationToken> registrationTokens;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<UserRole> userRoles;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "UserRole",
+        joinColumns = { @JoinColumn(name = "user_id") },
+        inverseJoinColumns = { @JoinColumn(name = "role_id") }
+    )
+    @JsonIgnore
+    @ToString.Exclude
+    private Set<Role> roles;
 }

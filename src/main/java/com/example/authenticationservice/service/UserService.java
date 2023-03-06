@@ -24,4 +24,19 @@ public class UserService {
     public Boolean isHR(User user) {
         return userDao.isHR(user);
     }
+
+    @Transactional
+    public User getUserByEmail(String email) {
+        return userDao.getUserByEmail(email);
+    }
+
+    @Transactional
+    public User getUserByUsername(String username) {
+        return userDao.getUserByUsername(username);
+    }
+
+    @Transactional
+    public Integer createNewUser(User user) {
+        return userDao.createNewUser(user);
+    }
 }

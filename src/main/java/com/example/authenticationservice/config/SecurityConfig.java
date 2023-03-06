@@ -12,23 +12,23 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 //WebSecurityConfigurerAdapter needs to extended to override some of its methods
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    public void setUserDetailsService(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
-
-    // authentication provider uses the userDetailsService by calling the loadUserByUsername()
-    @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(){
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
-        provider.setPasswordEncoder(new BCryptPasswordEncoder());
-        return provider;
-    }
+public class SecurityConfig extends WebSecurityConfigurerAdapter{
+//    private UserDetailsService userDetailsService;
+//
+//    @Autowired
+//    public void setUserDetailsService(UserDetailsService userDetailsService) {
+//        this.userDetailsService = userDetailsService;
+//    }
+//
+//
+//    // authentication provider uses the userDetailsService by calling the loadUserByUsername()
+//    @Bean
+//    public DaoAuthenticationProvider daoAuthenticationProvider(){
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setUserDetailsService(userDetailsService);
+//        provider.setPasswordEncoder(new BCryptPasswordEncoder());
+//        return provider;
+//    }
 
     @Override
     @Bean

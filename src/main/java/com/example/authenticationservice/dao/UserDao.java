@@ -41,11 +41,55 @@ public class UserDao {
     }
 
     public Boolean isHR(User user) {
-        for (UserRole userRole: user.getUserRoles()) {
-            if (userRole.getRole().getRoleName().equals("HR")) {
-                return true;
-            }
+        return true;
+    }
+
+    public User getUserByEmail(String email) {
+        Session session;
+        Optional<User> user = null;
+        try{
+            session = sessionFactory.getCurrentSession();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<User> cq = cb.createQuery(User.class);
+            Root<User> root = cq.from(User.class);
+            Predicate predicate = cb.equal(root.get("email"), email);
+            cq.select(root).where(predicate);
+            user = session.createQuery(cq).uniqueResultOptional();
         }
-        return false;
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return user.isPresent() ? user.get() : null;
+    }
+
+    public User getUserByUsername(String username) {
+        Session session;
+        Optional<User> user = null;
+        try{
+            session = sessionFactory.getCurrentSession();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<User> cq = cb.createQuery(User.class);
+            Root<User> root = cq.from(User.class);
+            Predicate predicate = cb.equal(root.get("username"), username);
+            cq.select(root).where(predicate);
+            user = session.createQuery(cq).uniqueResultOptional();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return user.isPresent() ? user.get() : null;
+    }
+
+    public Integer createNewUser(User user) {
+        Session session;
+        Integer userId = null;
+        try{
+            session = sessionFactory.getCurrentSession();
+            userId = (Integer)session.save(user);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return userId;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.authenticationservice.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -32,6 +33,8 @@ public class Role {
     @Column(name="last_modification_date")
     private Timestamp lastModificationDate;
 
-    @OneToMany(mappedBy = "role")
-    private Set<UserRole> userRoles;
+    @ManyToMany(mappedBy = "roles")
+    @ToString.Exclude
+    @JsonIgnore
+    private Set<User> users;
 }
