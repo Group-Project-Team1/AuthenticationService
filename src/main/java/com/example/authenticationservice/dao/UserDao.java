@@ -1,5 +1,6 @@
 package com.example.authenticationservice.dao;
 
+import com.example.authenticationservice.domain.entity.Role;
 import com.example.authenticationservice.domain.entity.User;
 import com.example.authenticationservice.domain.entity.UserRole;
 import org.hibernate.Session;
@@ -11,6 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Repository
@@ -22,6 +24,27 @@ public class UserDao {
         this.sessionFactory = sessionFactory;
     }
 
+    @Transactional
+    public User loadUserByUsername(String username){
+        Session session;
+        Optional<User> user = null;
+        try{
+            session = sessionFactory.getCurrentSession();
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<User> cq = cb.createQuery(User.class);
+            Root<User> root = cq.from(User.class);
+            Predicate predicate = cb.equal(root.get("username"), username);
+            cq.select(root).where(predicate);
+            user = session.createQuery(cq).uniqueResultOptional();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return (user.isPresent())? user.get() : null;
+    }
+
+
+    @Transactional
     public User getUserById(Integer id) {
         Session session;
         Optional<User> user = null;
@@ -41,9 +64,15 @@ public class UserDao {
     }
 
     public Boolean isHR(User user) {
-        return true;
+        for (Role role: user.getRoles()) {
+            if (role.getId() == 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
+    @Transactional
     public User getUserByEmail(String email) {
         Session session;
         Optional<User> user = null;
@@ -62,6 +91,7 @@ public class UserDao {
         return user.isPresent() ? user.get() : null;
     }
 
+    @Transactional
     public User getUserByUsername(String username) {
         Session session;
         Optional<User> user = null;
@@ -80,6 +110,7 @@ public class UserDao {
         return user.isPresent() ? user.get() : null;
     }
 
+    @Transactional
     public Integer createNewUser(User user) {
         Session session;
         Integer userId = null;

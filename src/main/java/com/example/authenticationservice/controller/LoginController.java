@@ -4,7 +4,9 @@ package com.example.authenticationservice.controller;
 import com.example.authenticationservice.domain.entity.RegistrationToken;
 import com.example.authenticationservice.domain.entity.Role;
 import com.example.authenticationservice.domain.entity.User;
+import com.example.authenticationservice.domain.request.LoginRequest;
 import com.example.authenticationservice.domain.request.RegisterRequest;
+import com.example.authenticationservice.domain.response.LoginResponse;
 import com.example.authenticationservice.domain.response.RegisterResponse;
 import com.example.authenticationservice.exception.*;
 import com.example.authenticationservice.security.AuthUserDetail;
@@ -32,21 +34,17 @@ public class LoginController {
     private UserService userService;
     private RegistrationTokenService registrationTokenService;
     private RoleService roleService;
+    private JwtProvider jwtProvider;
 
     @Autowired
     public LoginController(
             AuthenticationManager authenticationManager, UserService userService,
-            RegistrationTokenService registrationTokenService, RoleService roleService) {
+            RegistrationTokenService registrationTokenService, RoleService roleService,
+            JwtProvider jwtProvider) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.registrationTokenService = registrationTokenService;
         this.roleService = roleService;
-    }
-
-    private JwtProvider jwtProvider;
-
-    @Autowired
-    public void setJwtProvider(JwtProvider jwtProvider) {
         this.jwtProvider = jwtProvider;
     }
 
@@ -98,9 +96,35 @@ public class LoginController {
 
         // Return a success message.
         User registeredUser = userService.getUserById(userId);
+        
+        //TODO: Assign a house for the new user using Housing Service.
+
+        // TODO: Create a new application for the new user using Application Service.
         return RegisterResponse.builder()
                 .message("Successfully register a new user!")
                 .user(registeredUser)
+                .build();
+    }
+
+    @PostMapping("auth/login")
+    public LoginResponse login(@RequestBody LoginRequest request) throws AuthenticationException{
+
+        Authentication authentication;
+        //Try to authenticate the user using the username and password
+        authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
+
+        //Successfully authenticated user will be stored in the authUserDetail object
+        AuthUserDetail authUserDetail = (AuthUserDetail) authentication.getPrincipal(); //getPrincipal() returns the user object
+
+        //A token wil be created using the username/email/userId and permission
+        String token = jwtProvider.createToken(authUserDetail);
+
+        //Returns the token as a response to the frontend/postman
+        return LoginResponse.builder()
+                .message("Welcome " + authUserDetail.getUsername())
+                .token(token)
                 .build();
     }
 }

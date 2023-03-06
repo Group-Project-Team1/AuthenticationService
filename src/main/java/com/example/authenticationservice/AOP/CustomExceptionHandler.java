@@ -5,6 +5,7 @@ import com.example.authenticationservice.domain.response.ErrorResponse;
 import com.example.authenticationservice.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -38,14 +39,16 @@ public class CustomExceptionHandler {
         );
     }
 
-//    @ExceptionHandler(value = {AuthenticationException.class})
-//    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException e){
-//        return new ResponseEntity<>(
-//                ErrorResponse.builder()
-//                        .message("Incorrect credentials, please try again.")
-//                        .build(),
-//                HttpStatus.BAD_REQUEST
-//        );
-//    }
+    @ExceptionHandler(value = {
+            BadCredentialsException.class
+    })
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(BadCredentialsException e){
+        return new ResponseEntity<>(
+                ErrorResponse.builder()
+                        .message("Incorrect credentials, please try again.")
+                        .build(),
+                HttpStatus.BAD_REQUEST
+        );
+    }
 
 }

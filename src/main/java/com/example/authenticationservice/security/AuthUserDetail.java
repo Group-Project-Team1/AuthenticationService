@@ -11,7 +11,8 @@ import java.util.List;
 //The UserDetails interface contains all the fields that a user might have
 @Builder
 public class AuthUserDetail implements UserDetails {
-
+    private Integer userId;
+    private String email;
     private String username;
     private String password;
     private boolean accountNonExpired;
