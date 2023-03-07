@@ -28,7 +28,8 @@ public class CustomExceptionHandler {
         DuplicateUsernameException.class,
         RegistrationTokenExpiredException.class,
         RegistrationTokenNotExist.class,
-        WrongRegistrationTokenException.class
+        WrongRegistrationTokenException.class,
+        InvalidAuthorityException.class
     })
     public ResponseEntity<ErrorResponse> handleRegistrationException(Exception e){
         return new ResponseEntity<>(
