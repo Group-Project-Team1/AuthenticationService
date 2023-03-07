@@ -3,6 +3,7 @@ package com.example.authenticationservice.controller;
 import com.example.authenticationservice.domain.entity.RegistrationToken;
 import com.example.authenticationservice.domain.entity.User;
 import com.example.authenticationservice.domain.response.RegistrationTokenResponse;
+import com.example.authenticationservice.exception.InvalidAuthorityException;
 import com.example.authenticationservice.service.RegistrationTokenService;
 import com.example.authenticationservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,23 +28,21 @@ public class HRController {
 
     @GetMapping("createToken")
     @PreAuthorize("hasAuthority('hr')")
-    public RegistrationTokenResponse createRegistrationToken(@RequestParam("email") String email) {
+    public RegistrationTokenResponse createRegistrationToken(@RequestParam("email") String email)
+            throws InvalidAuthorityException{
         // Get the authorized user, check if he is a HR or not.
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userService.getUserByUsername(username);
         Boolean isHR = userService.isHR(currentUser);
         // if an HR, create a new token
-        if (isHR) {
-            RegistrationToken token = registrationTokenService.createToken(email, currentUser);
-            // TODO: send the token to the given email.
-            return RegistrationTokenResponse.builder()
-                    .message("Created a new token...")
-                    .registrationToken(token)
-                    .build();
+        if (!isHR) {
+            throw new InvalidAuthorityException(username);
         }
+        RegistrationToken token = registrationTokenService.createToken(email, currentUser);
+        // TODO: send the token to the given email.
         return RegistrationTokenResponse.builder()
-                .message("This employee is not an HR, cannot create registration token...")
-                .registrationToken(null)
+                .message("Created a new token...")
+                .registrationToken(token)
                 .build();
     }
 }
