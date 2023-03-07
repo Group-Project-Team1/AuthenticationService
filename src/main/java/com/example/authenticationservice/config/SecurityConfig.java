@@ -55,10 +55,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
         http
             .csrf().disable()
+            .antMatcher("api/employee/*")
             .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
             .authorizeRequests()
             .antMatchers("api/hr/*").hasAuthority("hr")
-            .antMatchers("api/employee/*").hasAuthority("employee")
+//            .antMatchers("api/employee/*").permitAll()
             .anyRequest()
             .authenticated();
     }
