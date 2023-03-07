@@ -6,6 +6,8 @@ import com.example.authenticationservice.domain.response.RegistrationTokenRespon
 import com.example.authenticationservice.service.RegistrationTokenService;
 import com.example.authenticationservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,11 +26,11 @@ public class HRController {
     }
 
     @GetMapping("createToken")
+    @PreAuthorize("hasAuthority('hr')")
     public RegistrationTokenResponse createRegistrationToken(@RequestParam("email") String email) {
-        // TODO: get the current login user.
-
-        // Check the role of the user, if he/she is a HR.
-        User currentUser = userService.getUserById(1);
+        // Get the authorized user, check if he is a HR or not.
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userService.getUserByUsername(username);
         Boolean isHR = userService.isHR(currentUser);
         // if an HR, create a new token
         if (isHR) {
