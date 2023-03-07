@@ -3,6 +3,7 @@ package com.example.authenticationservice.controller;
 import com.example.authenticationservice.domain.entity.RegistrationToken;
 import com.example.authenticationservice.domain.entity.User;
 import com.example.authenticationservice.domain.response.RegistrationTokenResponse;
+import com.example.authenticationservice.exception.DuplicateEmailForTokenException;
 import com.example.authenticationservice.exception.InvalidAuthorityException;
 import com.example.authenticationservice.service.RegistrationTokenService;
 import com.example.authenticationservice.service.UserService;
@@ -43,17 +44,27 @@ public class HRController {
         if (!isHR) {
             throw new InvalidAuthorityException(username);
         }
-        RegistrationToken token = registrationTokenService.createToken(email, currentUser);
 
-        String messageBody = "Link to registration page: localhost:9999/api/employee/register\n Token: " + token.getToken();
-        Message message = new Message(messageBody.getBytes(StandardCharsets.UTF_8));
-        message.getMessageProperties().getHeaders().put("subject", "This is your token for registration");
-        message.getMessageProperties().getHeaders().put("recipient", email);
-        rabbitTemplate.convertAndSend("email.direct", "emailKey", message);
+        try {
+            RegistrationToken token = registrationTokenService.createToken(email, currentUser);
 
-        return RegistrationTokenResponse.builder()
-                .message("Created a new token...")
-                .registrationToken(token)
-                .build();
+            String messageBody = "Link to registration page: localhost:9999/api/employee/register\n Token: " + token.getToken();
+            Message message = new Message(messageBody.getBytes(StandardCharsets.UTF_8));
+            message.getMessageProperties().getHeaders().put("subject", "This is your token for registration");
+            message.getMessageProperties().getHeaders().put("recipient", email);
+            rabbitTemplate.convertAndSend("email.direct", "emailKey", message);
+
+            return RegistrationTokenResponse.builder()
+                    .message("Created a new token...")
+                    .registrationToken(token)
+                    .build();
+
+        } catch (DuplicateEmailForTokenException e) {
+            RegistrationToken token = registrationTokenService.getLatestTokenByEmail(email);
+            return RegistrationTokenResponse.builder()
+                    .message(e.getMessage())
+                    .registrationToken(token)
+                    .build();
+        }
     }
 }
