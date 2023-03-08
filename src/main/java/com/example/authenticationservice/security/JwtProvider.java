@@ -23,10 +23,11 @@ public class JwtProvider {
 
 
     // create jwt from a UserDetail
-    public String createToken(UserDetails userDetails){
+    public String createToken(AuthUserDetail authUserDetail){
         //Claims is essentially a key-value pair, where the key is a string and the value is an object
-        Claims claims = Jwts.claims().setSubject(userDetails.getUsername()); // user identifier
-        claims.put("permissions", userDetails.getAuthorities()); // user permission
+        Claims claims = Jwts.claims().setSubject(authUserDetail.getUsername()); // user identifier
+        claims.put("permissions", authUserDetail.getAuthorities()); // user permission
+        claims.put("userId", authUserDetail.getUserId());
         return Jwts.builder()
                 .setClaims(claims)
                 .signWith(SignatureAlgorithm.HS256, key) // algorithm and key to sign the token

@@ -21,6 +21,10 @@ public class AuthUserDetail implements UserDetails {
     private boolean enabled;
     private List<GrantedAuthority> authorities;
 
+    public Integer getUserId() {
+        return this.userId;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.authorities;
