@@ -1,6 +1,5 @@
 package com.example.authenticationservice.controller;
 
-
 import com.example.authenticationservice.domain.entity.RegistrationToken;
 import com.example.authenticationservice.domain.entity.Role;
 import com.example.authenticationservice.domain.entity.User;
@@ -15,6 +14,8 @@ import com.example.authenticationservice.service.RegistrationTokenService;
 import com.example.authenticationservice.service.RoleService;
 import com.example.authenticationservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,7 +24,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 @RestController
@@ -36,16 +39,19 @@ public class LoginController {
     private RoleService roleService;
     private JwtProvider jwtProvider;
 
+    private RestTemplate restTemplate;
+
     @Autowired
     public LoginController(
             AuthenticationManager authenticationManager, UserService userService,
             RegistrationTokenService registrationTokenService, RoleService roleService,
-            JwtProvider jwtProvider) {
+            JwtProvider jwtProvider, RestTemplateBuilder restTemplateBuilder) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
         this.registrationTokenService = registrationTokenService;
         this.roleService = roleService;
         this.jwtProvider = jwtProvider;
+        this.restTemplate = restTemplateBuilder.build();
     }
 
     @PostMapping("/register")
@@ -96,10 +102,26 @@ public class LoginController {
 
         // Return a success message.
         User registeredUser = userService.getUserById(userId);
-        
-        //TODO: Assign a house for the new user using Housing Service.
 
-        // TODO: Create a new application for the new user using Application Service.
+//        //TODO: Use RestTemplate to add the call that single endpoint from the CompositeService.
+        String email = registeredUser.getEmail();
+        String URL = "http://localhost:8083/composite-service/auth/user-register/" + userId + "/" + email;
+        Authentication authentication;
+        //Try to authenticate the user using the username and password
+        authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        );
+
+        //Successfully authenticated user will be stored in the authUserDetail object
+        AuthUserDetail authUserDetail = (AuthUserDetail) authentication.getPrincipal(); //getPrincipal() returns the user object
+
+        //A token wil be created using the username/email/userId and permission
+        String token = "Bearer:" + jwtProvider.createToken(authUserDetail);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+        HttpEntity<String> jwtEntity = new HttpEntity<String>(headers);
+        ResponseEntity<String> response = restTemplate.exchange(URL, HttpMethod.POST, jwtEntity, String.class);
+        System.out.println(response);
         return RegisterResponse.builder()
                 .message("Successfully register a new user!")
                 .user(registeredUser)
