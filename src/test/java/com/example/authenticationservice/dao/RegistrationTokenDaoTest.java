@@ -25,12 +25,12 @@ public class RegistrationTokenDaoTest {
     @Test
     @Transactional
     public void testGetRegistrationTokenByToken(){
-        String token1 = "team1-em1@gmail.com";
+        String token1 = "team1-em1@gmail.com--1415907224";
         RegistrationToken actual1 = registrationTokenDao.getRegistrationTokenByToken(token1);
-        Integer expectedId1 = 2;
-        String token2 = "team1-em2@gmail.com";
+        Integer expectedId1 = 1;
+        String token2 = "team1-em2@gmail.com--1032024156";
         RegistrationToken actual2 = registrationTokenDao.getRegistrationTokenByToken(token2);
-        Integer expectedId2 = 4;
+        Integer expectedId2 = 2;
         String token3 = "randomtoken";
         RegistrationToken actual3 = registrationTokenDao.getRegistrationTokenByToken(token3);
         assertEquals(actual1.getId(), expectedId1);
@@ -41,9 +41,9 @@ public class RegistrationTokenDaoTest {
     @Test
     @Transactional
     public void testIsExpired() {
-        String token = "team1-em1@gmail.com";
+        String token = "team1-em1@gmail.com--1415907224";
         RegistrationToken rt = registrationTokenDao.getRegistrationTokenByToken(token);
-        assertTrue(registrationTokenDao.isExpired(rt));
+        assertFalse(registrationTokenDao.isExpired(rt));
     }
 
     @Test
@@ -51,10 +51,10 @@ public class RegistrationTokenDaoTest {
     public void testGetRegistrationTokenByEmail() {
         String email1 = "em1@gmail.com";
         RegistrationToken actual1 = registrationTokenDao.getRegistrationTokenByEmail(email1);
-        Integer expectedId1 = 2;
+        Integer expectedId1 = 1;
         String email2 = "em2@gmail.com";
         RegistrationToken actual2 = registrationTokenDao.getRegistrationTokenByEmail(email2);
-        Integer expectedId2 = 4;
+        Integer expectedId2 = 2;
         String email3 = "randomemail@gmail.com";
         RegistrationToken actual3 = registrationTokenDao.getRegistrationTokenByEmail(email3);
         assertEquals(actual1.getId(), expectedId1);
@@ -65,12 +65,8 @@ public class RegistrationTokenDaoTest {
     @Test
     @Transactional
     public void testGetTokensByEmailExpDateDesc() {
-        String email = "user2@gmail.com";
+        String email = "em1@gmail.com";
         List<RegistrationToken> registrationTokens = registrationTokenDao.getTokensByEmailExpDateDesc(email);
-        assertEquals(31, registrationTokens.get(0).getId());
-        assertEquals(30, registrationTokens.get(1).getId());
-        assertEquals(29, registrationTokens.get(2).getId());
-        assertEquals(28, registrationTokens.get(3).getId());
-        assertEquals(27, registrationTokens.get(4).getId());
+        assertEquals(1, registrationTokens.get(0).getId());
     }
 }

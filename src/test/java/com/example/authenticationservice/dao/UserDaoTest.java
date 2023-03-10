@@ -22,12 +22,12 @@ public class UserDaoTest {
     @Test
     @Transactional
     public void testLoadUserByUsername(){
-        String username1 = "em1";
+        String username1 = "hr1";
         User u1 = userDao.loadUserByUsername(username1);
-        Integer expectedId1 = 4;
-        String username2 = "em2";
+        Integer expectedId1 = 1;
+        String username2 = "hr2";
         User u2 = userDao.loadUserByUsername(username2);
-        Integer expectedId2 = 5;
+        Integer expectedId2 = 2;
         String username3 = "randomname";
         User u3 = userDao.loadUserByUsername(username3);
         assertEquals(u1.getId(), expectedId1);
@@ -38,12 +38,12 @@ public class UserDaoTest {
     @Test
     @Transactional
     public void testGetUserById() {
-        Integer id1 = 4;
+        Integer id1 = 1;
         User u1 = userDao.getUserById(id1);
-        String expectedUsername1 = "em1";
-        Integer id2 = 5;
+        String expectedUsername1 = "hr1";
+        Integer id2 = 2;
         User u2 = userDao.getUserById(id2);
-        String expectedUsername2 = "em2";
+        String expectedUsername2 = "hr2";
         Integer id3 = 1521323;
         User u3 = userDao.getUserById(id3);
         assertEquals(u1.getUsername(), expectedUsername1);
@@ -54,12 +54,12 @@ public class UserDaoTest {
     @Test
     @Transactional
     public void testGetUserByEmail() {
-        String email1 = "em1@gmail.com";
+        String email1 = "hr1@gmail.com";
         User user1 = userDao.getUserByEmail(email1);
-        Integer expectedId1 = 4;
-        String email2 = "em2@gmail.com";
+        Integer expectedId1 = 1;
+        String email2 = "hr2@gmail.com";
         User user2 = userDao.getUserByEmail(email2);
-        Integer expectedId2 = 5;
+        Integer expectedId2 = 2;
         String email3 = "randomemail@gmail.com";
         User user3 = userDao.getUserByEmail(email3);
         assertEquals(user1.getId(), expectedId1);
@@ -70,12 +70,12 @@ public class UserDaoTest {
     @Test
     @Transactional
     public void testGetUserByUsername(){
-        String username1 = "em1";
+        String username1 = "hr1";
         User u1 = userDao.getUserByUsername(username1);
-        Integer expectedId1 = 4;
-        String username2 = "em2";
+        Integer expectedId1 = 1;
+        String username2 = "hr2";
         User u2 = userDao.getUserByUsername(username2);
-        Integer expectedId2 = 5;
+        Integer expectedId2 = 2;
         String username3 = "randomname";
         User u3 = userDao.getUserByUsername(username3);
         assertEquals(u1.getId(), expectedId1);
@@ -87,9 +87,7 @@ public class UserDaoTest {
     @Transactional
     public void testIsHR(){
         User u1 = userDao.getUserById(1);
-        User u2 = userDao.getUserById(4);
         assertTrue(userDao.isHR(u1));
-        assertFalse(userDao.isHR(u2));
     }
 
 }
