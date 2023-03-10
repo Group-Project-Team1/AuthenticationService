@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -86,6 +88,8 @@ public class LoginController {
                 .username(request.getUsername())
                 .password(request.getPassword())
                 .email(request.getEmail())
+                .createDate(Timestamp.from(Instant.now()))
+                .lastModificationDate(Timestamp.from(Instant.now()))
                 .activeFlag(true)
                 .registrationTokens(new HashSet<>())
                 .roles(new HashSet<>())
