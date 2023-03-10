@@ -107,7 +107,7 @@ public class LoginController {
         // Return a success message.
         User registeredUser = userService.getUserById(userId);
 
-//        //TODO: Use RestTemplate to add the call that single endpoint from the CompositeService.
+        // Use RestTemplate to add the call that single endpoint from the CompositeService.
         String email = registeredUser.getEmail();
         String URL = "http://localhost:8083/composite-service/auth/user-register/" + userId + "/" + email;
         Authentication authentication;
