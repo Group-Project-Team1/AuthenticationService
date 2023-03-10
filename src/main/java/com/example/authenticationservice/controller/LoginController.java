@@ -103,7 +103,7 @@ public class LoginController {
         // Return a success message.
         User registeredUser = userService.getUserById(userId);
 
-        //TODO: Use RestTemplate to add the call that single endpoint from the CompositeService.
+//        //TODO: Use RestTemplate to add the call that single endpoint from the CompositeService.
         String email = registeredUser.getEmail();
         String URL = "http://localhost:8083/composite-service/auth/user-register/" + userId + "/" + email;
         Authentication authentication;
@@ -116,7 +116,7 @@ public class LoginController {
         AuthUserDetail authUserDetail = (AuthUserDetail) authentication.getPrincipal(); //getPrincipal() returns the user object
 
         //A token wil be created using the username/email/userId and permission
-        String token = jwtProvider.createToken(authUserDetail);
+        String token = "Bearer:" + jwtProvider.createToken(authUserDetail);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
         HttpEntity<String> jwtEntity = new HttpEntity<String>(headers);
